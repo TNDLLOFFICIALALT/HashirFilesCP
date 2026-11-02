@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: #0f0f0f;
   color: #eee;
   min-height: 100vh;

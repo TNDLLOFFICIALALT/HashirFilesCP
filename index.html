@@ -9,85 +9,81 @@
 <body>
   <div class="noise"></div>
 
-  <!-- ===== HEADER ===== -->
   <header>
-    <div class="header-inner">
-      <h1>HashirFilesCP</h1>
-      <p class="tagline"The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
-    </div>
+    <h1>HashirFilesCP</h1>
+    <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
   </header>
 
-  <!-- ===== TABS ===== -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="featured">Featured</button>
-    <button class="tab" data-tab="archive">Archive</button>
-    <button class="tab" data-tab="info">Info</button>
-  </nav>
+  <!-- TABS -->
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab active" data-tab="featured">Featured</button>
+      <button class="tab" data-tab="archive">Archive</button>
+      <button class="tab" data-tab="info">Info</button>
+    </div>
+  </div>
 
-  <!-- ===== TAB CONTENT ===== -->
-  <main>
-    <!-- TAB 1: FEATURED -->
-    <section id="featured" class="tab-content active">
-      <div class="featured-wrapper">
+  <!-- CONTENT -->
+  <div class="content">
+    <!-- FEATURED TAB -->
+    <section id="featured" class="tab-panel active">
+      <div class="featured-container">
         <div class="featured-card">
-          <img src="images/ImageHZ.jpg" alt="Featured" class="featured-img" id="featuredImg" />
-          <div class="featured-info">
-            <h2 class="featured-title" contenteditable="true">The Man, The Myth, The Legend</h2>
-            <p class="featured-subtitle">The One Who Messed Up</p>
+          <img src="images/ImageHZ.jpg" alt="Featured" id="featuredImg">
+          <div class="featured-text">
+            <h2 contenteditable="true">The Man, The Myth, The Legend</h2>
+            <p>The One Who Messed Up</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 2: ARCHIVE (GALLERY) -->
-    <section id="archive" class="tab-content">
+    <!-- ARCHIVE TAB -->
+    <section id="archive" class="tab-panel">
       <div class="gallery" id="gallery"></div>
     </section>
 
-    <!-- TAB 3: INFO -->
-    <section id="info" class="tab-content">
-      <div class="info-wrapper">
+    <!-- INFO TAB -->
+    <section id="info" class="tab-panel">
+      <div class="info-container">
         <div class="info-card">
           <h2 contenteditable="true">About</h2>
-          <p contenteditable="true" class="info-text">
-           A private collection of screenshots that were never meant to surface if someone had made the right choice.<br><br>
-            You can edit this text directly. Add whatever you want — story, context, disclaimers, etc.
+          <p contenteditable="true">
+            A private collection of screenshots that were never meant to surface if someone had made the right choice.
           </p>
 
-          <div class="info-divider"></div>
+          <div class="divider"></div>
 
           <h3 contenteditable="true">Details</h3>
-          <p contenteditable="true" class="info-text">
+          <p contenteditable="true">
             These Leaks Will Change Your Point Of View About Hashir
           </p>
 
-          <div class="info-divider"></div>
+          <div class="divider"></div>
 
           <h3 contenteditable="true">Note</h3>
-          <p contenteditable="true" class="info-text">
+          <p contenteditable="true">
             Everything on this page is editable. Just click and type.
           </p>
         </div>
       </div>
     </section>
-  </main>
+  </div>
 
   <footer>
     <p>HashirFilesCP • Private Archive</p>
   </footer>
 
-  <!-- ===== LIGHTBOX ===== -->
+  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox">
     <button class="nav-btn prev" id="prevBtn">‹</button>
     <button class="nav-btn next" id="nextBtn">›</button>
     <button class="close-btn" id="closeBtn">×</button>
 
-    <div class="lightbox-content">
-      <img src="" alt="" id="lightboxImg" />
-      <div class="lightbox-meta">
-        <p class="lightbox-comment" id="lightboxComment"></p>
-        <p class="lightbox-counter" id="lightboxCounter"></p>
-      </div>
+    <div class="lightbox-inner">
+      <img src="" id="lightboxImg" alt="">
+      <p class="lightbox-comment" id="lightboxComment"></p>
+      <p class="lightbox-counter" id="lightboxCounter"></p>
     </div>
   </div>
 
@@ -110,16 +106,19 @@
     ];
 
     // ========== TABS ==========
-    const tabs = document.querySelectorAll(".tab");
-    const contents = document.querySelectorAll(".tab-content");
+    const tabButtons = document.querySelectorAll(".tab");
+    const tabPanels = document.querySelectorAll(".tab-panel");
 
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        contents.forEach(c => c.classList.remove("active"));
+    tabButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Remove active from all
+        tabButtons.forEach(btn => btn.classList.remove("active"));
+        tabPanels.forEach(panel => panel.classList.remove("active"));
 
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.tab).classList.add("active");
+        // Add active to clicked
+        button.classList.add("active");
+        const target = button.getAttribute("data-tab");
+        document.getElementById(target).classList.add("active");
       });
     });
 
@@ -128,9 +127,8 @@
     let currentIndex = 0;
 
     items.forEach((item, index) => {
-      const card = document.createElement("article");
+      const card = document.createElement("div");
       card.className = "card";
-      card.style.animationDelay = `${index * 0.05}s`;
 
       const img = document.createElement("img");
       img.src = `images/${item.src}`;
@@ -195,11 +193,6 @@
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowLeft") showPrev();
       if (e.key === "ArrowRight") showNext();
-    });
-
-    // Also allow clicking the featured image
-    document.getElementById("featuredImg").addEventListener("click", () => {
-      // optional: you can open a special lightbox for it later if you want
     });
   </script>
 </body>

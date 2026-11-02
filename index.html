@@ -1,27 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HashirFilesCP</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="noise"></div>
+
   <header>
-    <h1>HashirFilesCP</h1>
-    <p class="tagline">Because Hashir Didn't Invest In Sec-Ops Im Leaking His Dm's</p>
-    <p class="description">
-      A collection of screenshots that were never meant to be public if someone had made the right choice.<br>
-      Click any image to expand it.
-    </p>
+    <div class="header-inner">
+      <h1>HashirFilesCP</h1>
+      <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
+      <p class="description">
+        A private collection of screenshots that were never meant to surface if someone had made the right choice.<br />
+        Click any image to expand • Use arrow keys in lightbox
+      </p>
+      <div class="stats">
+        <span id="imageCount">0 images</span>
+      </div>
+    </div>
   </header>
 
   <main class="gallery" id="gallery"></main>
 
+  <footer>
+    <p>HashirFilesCP • Built for the plot</p>
+  </footer>
+
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
-    <span class="close-btn" id="closeBtn">&times;</span>
-    <img src="" alt="Expanded image" id="lightboxImg">
+    <button class="nav-btn prev" id="prevBtn" aria-label="Previous">‹</button>
+    <button class="nav-btn next" id="nextBtn" aria-label="Next">›</button>
+    <button class="close-btn" id="closeBtn" aria-label="Close">×</button>
+    
+    <div class="lightbox-content">
+      <img src="" alt="Expanded image" id="lightboxImg" />
+      <div class="lightbox-meta">
+        <p class="lightbox-comment" id="lightboxComment"></p>
+        <p class="lightbox-counter" id="lightboxCounter"></p>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -42,48 +62,84 @@
     const gallery = document.getElementById("gallery");
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxComment = document.getElementById("lightboxComment");
+    const lightboxCounter = document.getElementById("lightboxCounter");
     const closeBtn = document.getElementById("closeBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const imageCount = document.getElementById("imageCount");
 
-    // Create the gallery
-    items.forEach(itemData => {
-      const item = document.createElement("div");
-      item.className = "item";
+    let currentIndex = 0;
+
+    // Update image count
+    imageCount.textContent = `${items.length} images`;
+
+    // Build gallery
+    items.forEach((item, index) => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.style.animationDelay = `${index * 0.06}s`;
 
       const img = document.createElement("img");
-      img.src = `images/${itemData.src}`;
-      img.alt = itemData.src;
+      img.src = `images/${item.src}`;
+      img.alt = item.comment;
       img.loading = "lazy";
 
-      // Open lightbox
-      img.addEventListener("click", () => {
-        lightboxImg.src = `images/${itemData.src}`;
-        lightbox.classList.add("active");
-        document.body.style.overflow = "hidden";
-      });
+      img.addEventListener("click", () => openLightbox(index));
 
       const comment = document.createElement("p");
       comment.className = "comment";
-      comment.textContent = itemData.comment;
+      comment.textContent = item.comment;
 
-      item.appendChild(img);
-      item.appendChild(comment);
-      gallery.appendChild(item);
+      card.appendChild(img);
+      card.appendChild(comment);
+      gallery.appendChild(card);
     });
 
-    // Close lightbox
+    function openLightbox(index) {
+      currentIndex = index;
+      updateLightbox();
+      lightbox.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
     function closeLightbox() {
       lightbox.classList.remove("active");
       document.body.style.overflow = "";
     }
 
+    function updateLightbox() {
+      const item = items[currentIndex];
+      lightboxImg.src = `images/${item.src}`;
+      lightboxComment.textContent = item.comment;
+      lightboxCounter.textContent = `${currentIndex + 1} / ${items.length}`;
+    }
+
+    function showPrev() {
+      currentIndex = (currentIndex - 1 + items.length) % items.length;
+      updateLightbox();
+    }
+
+    function showNext() {
+      currentIndex = (currentIndex + 1) % items.length;
+      updateLightbox();
+    }
+
+    // Events
     closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", showPrev);
+    nextBtn.addEventListener("click", showNext);
 
     lightbox.addEventListener("click", (e) => {
       if (e.target === lightbox) closeLightbox();
     });
 
     document.addEventListener("keydown", (e) => {
+      if (!lightbox.classList.contains("active")) return;
+
       if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
     });
   </script>
 </body>

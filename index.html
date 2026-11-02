@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HashirFilesCP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>HashirFilesCP</h1>
+    <p>because sec-ops was optional</p>
+  </header>
+
+  <main class="gallery" id="gallery">
+    <!-- images get injected here -->
+  </main>
+
+  <script>
+    // List your image filenames here
+    const images = [
+      "dm1.jpg",
+      "dm2.jpg",
+      "dm3.jpg",
+      // add more...
+    ];
+
+    const gallery = document.getElementById("gallery");
+
+    images.forEach(src => {
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const img = document.createElement("img");
+      img.src = `images/${src}`;
+      img.alt = src;
+      img.loading = "lazy";
+
+      item.appendChild(img);
+      gallery.appendChild(item);
+    });
+  </script>
+</body>
+</html>

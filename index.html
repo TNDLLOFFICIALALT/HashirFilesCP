@@ -10,51 +10,45 @@
 
   <header>
     <h1>HashirFilesCP</h1>
-    <p class="tagline">>The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
+    <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
   </header>
 
   <!-- TABS -->
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('featured')">Featured</button>
-    <button class="tab-btn" onclick="showTab('archive')">Archive</button>
-    <button class="tab-btn" onclick="showTab('info')">Info</button>
+    <button class="tab-btn active" onclick="showTab('featured', this)">Featured</button>
+    <button class="tab-btn" onclick="showTab('archive', this)">Archive</button>
+    <button class="tab-btn" onclick="showTab('info', this)">Info</button>
   </div>
 
-  <!-- ===================== FEATURED TAB ===================== -->
+  <!-- FEATURED -->
   <div id="featured" class="tab-page active">
     <div class="featured-box">
       <img src="images/ImageHZ.jpg" alt="Featured">
       <h2>The Man, The Myth, The Legend</h2>
-      <p>he One Who Messed Up</p>
+      <p>Featured image</p>
     </div>
   </div>
 
-  <!-- ===================== ARCHIVE TAB ===================== -->
+  <!-- ARCHIVE -->
   <div id="archive" class="tab-page">
     <div class="gallery" id="gallery"></div>
   </div>
 
-  <!-- ===================== INFO TAB ===================== -->
+  <!-- INFO -->
   <div id="info" class="tab-page">
     <div class="info-box">
       <h2>About</h2>
-      <p>
-         A private collection of screenshots that were never meant to surface if someone had made the right choice.
-      </p>
+      <p>A private collection of screenshots that were never meant to surface if someone had made the right choice.</p>
 
       <div class="divider"></div>
 
       <h3>Details</h3>
-      <p>
-        These Leaks Will Change Your Point Of View About Hashir
-      </p>
+      <p>These Leaks Will Change Your Point Of View About Hashir</p>
 
       <div class="divider"></div>
 
       <h3>Note</h3>
-      <p>
-        Everything on this page is editable. Just click and type.
-      </p>
+      <p>You can edit these texts in the code.</p>
     </div>
   </div>
 
@@ -94,7 +88,7 @@
     ];
 
     // ========== TABS ==========
-    function showTab(tabId) {
+    function showTab(tabId, button) {
       // Hide all pages
       document.querySelectorAll('.tab-page').forEach(page => {
         page.classList.remove('active');
@@ -105,11 +99,11 @@
         btn.classList.remove('active');
       });
 
-      // Show selected page
+      // Show the selected page
       document.getElementById(tabId).classList.add('active');
 
-      // Highlight clicked button
-      event.target.classList.add('active');
+      // Make the clicked button active
+      button.classList.add('active');
     }
 
     // ========== GALLERY ==========

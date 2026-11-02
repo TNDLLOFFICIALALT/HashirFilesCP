@@ -5,48 +5,61 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #0f0f0f;
   color: #eee;
   min-height: 100vh;
+  line-height: 1.5;
 }
 
 header {
   text-align: center;
-  padding: 2.5rem 1rem 1.5rem;
+  padding: 3rem 1.5rem 2rem;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 header h1 {
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.8px;
+  margin-bottom: 0.4rem;
 }
 
-header p {
-  margin-top: 0.4rem;
+.tagline {
   color: #888;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+
+.description {
+  color: #aaa;
+  font-size: 0.98rem;
+  line-height: 1.6;
 }
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
   padding: 1.5rem;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 4rem;
 }
 
 .item {
   background: #1a1a1a;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   border: 1px solid #2a2a2a;
-  transition: transform 0.2s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
 }
 
 .item img {
@@ -54,4 +67,86 @@ header p {
   height: auto;
   display: block;
   object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.item:hover img {
+  opacity: 0.92;
+}
+
+.comment {
+  padding: 14px 16px 16px;
+  font-size: 0.95rem;
+  color: #ccc;
+  border-top: 1px solid #2a2a2a;
+  line-height: 1.45;
+}
+
+/* ========== LIGHTBOX ========== */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 90vh;
+  border-radius: 10px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  font-size: 42px;
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+  transition: color 0.2s ease;
+  z-index: 1001;
+}
+
+.close-btn:hover {
+  color: #ff6b6b;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.9rem;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .close-btn {
+    top: 12px;
+    right: 18px;
+    font-size: 36px;
+  }
 }

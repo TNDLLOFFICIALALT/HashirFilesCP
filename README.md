@@ -14,4 +14,4 @@ skibidi rizzler ohio sigma hashir got caught
 ## 📦 Installation
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/thecresecent/HashirFilesCP.git](https://github.com/thecresecent/HashirFilesCP.git) 
+   git clone [https://github.com/TNDLLOFFICIALALT/HashirFilesCP.git](https://github.com/TNDLLOFFICALALT/HashirFilesCP.git) 

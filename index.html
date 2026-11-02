@@ -9,39 +9,81 @@
 <body>
   <header>
     <h1>HashirFilesCP</h1>
-    <p>Because Hashir Didn't Invest In Sec-Ops Im Leaking His Dm's</p>
+    <p class="tagline">Because Hashir Didn't Invest In Sec-Ops Im Leaking His Dm's</p>
+    <p class="description">
+      A collection of screenshots that were never meant to be public if someone had made the right choice.<br>
+      Click any image to expand it.
+    </p>
   </header>
 
   <main class="gallery" id="gallery"></main>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" id="closeBtn">&times;</span>
+    <img src="" alt="Expanded image" id="lightboxImg">
+  </div>
+
   <script>
-    const images = [
-      "IMG_0001.jpg",
-      "IMG_0002.jpg",
-      "IMG_0003.jpg",
-      "IMG_0005.jpg",
-      "IMG_0006.jpg",
-      "IMG_0008.jpg",
-      "IMG_0009.jpg",
-      "IMG_0010.jpg",
-      "IMG_0011.jpg",
-      "IMG_0012.jpg",
-      "IMG_0013.jpg"
+    const items = [
+      { src: "IMG_0001.jpg", comment: "weird" },
+      { src: "IMG_0002.jpg", comment: "what does bro mean by everywhere" },
+      { src: "IMG_0003.jpg", comment: "Let her sleep bro 😭" },
+      { src: "IMG_0005.jpg", comment: "what you mean by change dna 🤨" },
+      { src: "IMG_0006.jpg", comment: "how are kisses ganna change dna" },
+      { src: "IMG_0008.jpg", comment: "no way bro tastes sweet" },
+      { src: "IMG_0009.jpg", comment: "that is not tuff tho queen is the best peice in chess" },
+      { src: "IMG_0010.jpg", comment: "what does bro mean by \"physical earth\"" },
+      { src: "IMG_0011.jpg", comment: "warm each other up is sus 🤨" },
+      { src: "IMG_0012.jpg", comment: "How did Toha get involved in this 😭" },
+      { src: "IMG_0013.jpg", comment: "bro is begging at this point" }
     ];
 
     const gallery = document.getElementById("gallery");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const closeBtn = document.getElementById("closeBtn");
 
-    images.forEach(src => {
+    // Create the gallery
+    items.forEach(itemData => {
       const item = document.createElement("div");
       item.className = "item";
 
       const img = document.createElement("img");
-      img.src = `images/${src}`;
-      img.alt = src;
+      img.src = `images/${itemData.src}`;
+      img.alt = itemData.src;
       img.loading = "lazy";
 
+      // Open lightbox
+      img.addEventListener("click", () => {
+        lightboxImg.src = `images/${itemData.src}`;
+        lightbox.classList.add("active");
+        document.body.style.overflow = "hidden";
+      });
+
+      const comment = document.createElement("p");
+      comment.className = "comment";
+      comment.textContent = itemData.comment;
+
       item.appendChild(img);
+      item.appendChild(comment);
       gallery.appendChild(item);
+    });
+
+    // Close lightbox
+    function closeLightbox() {
+      lightbox.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    closeBtn.addEventListener("click", closeLightbox);
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
     });
   </script>
 </body>

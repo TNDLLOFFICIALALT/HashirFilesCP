@@ -9,34 +9,81 @@
 <body>
   <div class="noise"></div>
 
+  <!-- ===== HEADER ===== -->
   <header>
     <div class="header-inner">
       <h1>HashirFilesCP</h1>
-      <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
-      <p class="description">
-        A private collection of screenshots that were never meant to surface if someone had made the right choice.<br />
-        Click any image to expand • Use arrow keys in lightbox
-      </p>
-      <div class="stats">
-        <span id="imageCount">0 images</span>
-      </div>
+      <p class="tagline"The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
     </div>
   </header>
 
-  <main class="gallery" id="gallery"></main>
+  <!-- ===== TABS ===== -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="featured">Featured</button>
+    <button class="tab" data-tab="archive">Archive</button>
+    <button class="tab" data-tab="info">Info</button>
+  </nav>
+
+  <!-- ===== TAB CONTENT ===== -->
+  <main>
+    <!-- TAB 1: FEATURED -->
+    <section id="featured" class="tab-content active">
+      <div class="featured-wrapper">
+        <div class="featured-card">
+          <img src="images/ImageHZ.jpg" alt="Featured" class="featured-img" id="featuredImg" />
+          <div class="featured-info">
+            <h2 class="featured-title" contenteditable="true">The Man, The Myth, The Legend</h2>
+            <p class="featured-subtitle">The One Who Messed Up</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ARCHIVE (GALLERY) -->
+    <section id="archive" class="tab-content">
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <!-- TAB 3: INFO -->
+    <section id="info" class="tab-content">
+      <div class="info-wrapper">
+        <div class="info-card">
+          <h2 contenteditable="true">About</h2>
+          <p contenteditable="true" class="info-text">
+           A private collection of screenshots that were never meant to surface if someone had made the right choice.<br><br>
+            You can edit this text directly. Add whatever you want — story, context, disclaimers, etc.
+          </p>
+
+          <div class="info-divider"></div>
+
+          <h3 contenteditable="true">Details</h3>
+          <p contenteditable="true" class="info-text">
+            These Leaks Will Change Your Point Of View About Hashir
+          </p>
+
+          <div class="info-divider"></div>
+
+          <h3 contenteditable="true">Note</h3>
+          <p contenteditable="true" class="info-text">
+            Everything on this page is editable. Just click and type.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    <p>HashirFilesCP • Built for the plot</p>
+    <p>HashirFilesCP • Private Archive</p>
   </footer>
 
-  <!-- Lightbox -->
+  <!-- ===== LIGHTBOX ===== -->
   <div class="lightbox" id="lightbox">
-    <button class="nav-btn prev" id="prevBtn" aria-label="Previous">‹</button>
-    <button class="nav-btn next" id="nextBtn" aria-label="Next">›</button>
-    <button class="close-btn" id="closeBtn" aria-label="Close">×</button>
-    
+    <button class="nav-btn prev" id="prevBtn">‹</button>
+    <button class="nav-btn next" id="nextBtn">›</button>
+    <button class="close-btn" id="closeBtn">×</button>
+
     <div class="lightbox-content">
-      <img src="" alt="Expanded image" id="lightboxImg" />
+      <img src="" alt="" id="lightboxImg" />
       <div class="lightbox-meta">
         <p class="lightbox-comment" id="lightboxComment"></p>
         <p class="lightbox-counter" id="lightboxCounter"></p>
@@ -45,6 +92,7 @@
   </div>
 
   <script>
+    // ========== DATA ==========
     const items = [
       { src: "IMG_0001.jpg", comment: "weird" },
       { src: "IMG_0002.jpg", comment: "what does bro mean by everywhere" },
@@ -56,35 +104,38 @@
       { src: "IMG_0010.jpg", comment: "what does bro mean by \"physical earth\"" },
       { src: "IMG_0011.jpg", comment: "warm each other up is sus 🤨" },
       { src: "IMG_0012.jpg", comment: "How did Toha get involved in this 😭" },
-      { src: "IMG_0013.jpg", comment: "bro is begging at this point" }
+      { src: "IMG_0013.jpg", comment: "bro is begging at this point" },
+      { src: "ImageCord1.png", comment: "i think bro needs to hush hush 🥀" },
+      { src: "ImageCord2.png", comment: "damn i thought it was reserved for jay-z only 🍆💦" }
     ];
 
-    const gallery = document.getElementById("gallery");
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImg = document.getElementById("lightboxImg");
-    const lightboxComment = document.getElementById("lightboxComment");
-    const lightboxCounter = document.getElementById("lightboxCounter");
-    const closeBtn = document.getElementById("closeBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const imageCount = document.getElementById("imageCount");
+    // ========== TABS ==========
+    const tabs = document.querySelectorAll(".tab");
+    const contents = document.querySelectorAll(".tab-content");
 
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ========== GALLERY ==========
+    const gallery = document.getElementById("gallery");
     let currentIndex = 0;
 
-    // Update image count
-    imageCount.textContent = `${items.length} images`;
-
-    // Build gallery
     items.forEach((item, index) => {
       const card = document.createElement("article");
       card.className = "card";
-      card.style.animationDelay = `${index * 0.06}s`;
+      card.style.animationDelay = `${index * 0.05}s`;
 
       const img = document.createElement("img");
       img.src = `images/${item.src}`;
       img.alt = item.comment;
       img.loading = "lazy";
-
       img.addEventListener("click", () => openLightbox(index));
 
       const comment = document.createElement("p");
@@ -95,6 +146,12 @@
       card.appendChild(comment);
       gallery.appendChild(card);
     });
+
+    // ========== LIGHTBOX ==========
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxComment = document.getElementById("lightboxComment");
+    const lightboxCounter = document.getElementById("lightboxCounter");
 
     function openLightbox(index) {
       currentIndex = index;
@@ -125,10 +182,9 @@
       updateLightbox();
     }
 
-    // Events
-    closeBtn.addEventListener("click", closeLightbox);
-    prevBtn.addEventListener("click", showPrev);
-    nextBtn.addEventListener("click", showNext);
+    document.getElementById("closeBtn").addEventListener("click", closeLightbox);
+    document.getElementById("prevBtn").addEventListener("click", showPrev);
+    document.getElementById("nextBtn").addEventListener("click", showNext);
 
     lightbox.addEventListener("click", (e) => {
       if (e.target === lightbox) closeLightbox();
@@ -136,10 +192,14 @@
 
     document.addEventListener("keydown", (e) => {
       if (!lightbox.classList.contains("active")) return;
-
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowLeft") showPrev();
       if (e.key === "ArrowRight") showNext();
+    });
+
+    // Also allow clicking the featured image
+    document.getElementById("featuredImg").addEventListener("click", () => {
+      // optional: you can open a special lightbox for it later if you want
     });
   </script>
 </body>

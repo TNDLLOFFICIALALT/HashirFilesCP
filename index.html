@@ -31,14 +31,14 @@
 
   <!-- ARCHIVE -->
   <div id="archive" class="tab-page">
-    <div class="gallery" id="gallery"></div>
+    <div id="gallery"></div>
   </div>
 
   <!-- INFO -->
   <div id="info" class="tab-page">
     <div class="info-box">
       <h2>About</h2>
-      <p>A private collection of screenshots that were never meant to surface if someone had made the right choice.</p>
+      <p>>A private collection of screenshots that were never meant to surface if someone had made the right choice.</p>
 
       <div class="divider"></div>
 
@@ -48,7 +48,7 @@
       <div class="divider"></div>
 
       <h3>Note</h3>
-      <p>We Are Exposing Online Predators, And We Are NOT Harassing Little Kids, Or Doing So In ANY Manner.</p>
+      <p>>We Are Exposing Online Predators, And We Are NOT Harassing Little Kids, Or Doing So In ANY Manner.</p>
     </div>
   </div>
 
@@ -70,63 +70,88 @@
   </div>
 
   <script>
-    // ========== DATA ==========
-    const items = [
-      { src: "IMG_0001.jpg", comment: "weird" },
-      { src: "IMG_0002.jpg", comment: "what does bro mean by everywhere" },
-      { src: "IMG_0003.jpg", comment: "Let her sleep bro 😭" },
-      { src: "IMG_0005.jpg", comment: "what you mean by change dna 🤨" },
-      { src: "IMG_0006.jpg", comment: "how are kisses ganna change dna" },
-      { src: "IMG_0008.jpg", comment: "no way bro tastes sweet" },
-      { src: "IMG_0009.jpg", comment: "that is not tuff tho queen is the best peice in chess" },
-      { src: "IMG_0010.jpg", comment: "what does bro mean by \"physical earth\"" },
-      { src: "IMG_0011.jpg", comment: "warm each other up is sus 🤨" },
-      { src: "IMG_0012.jpg", comment: "How did Toha get involved in this 😭" },
-      { src: "IMG_0013.jpg", comment: "bro is begging at this point" },
-      { src: "ImageCord1.png", comment: "i think bro needs to hush hush 🥀" },
-      { src: "ImageCord2.png", comment: "damn i thought it was reserved for jay-z only 🍆💦" }
+    // ========== DATA (Oldest → Newest) ==========
+    const sections = [
+      {
+        date: "October 25, 2026",
+        items: [
+          { src: "IMG_0001.jpg", comment: "weird" },
+          { src: "IMG_0002.jpg", comment: "what does bro mean by everywhere" },
+          { src: "IMG_0003.jpg", comment: "Let her sleep bro 😭" },
+          { src: "IMG_0005.jpg", comment: "what you mean by change dna 🤨" },
+          { src: "IMG_0006.jpg", comment: "how are kisses ganna change dna" },
+          { src: "IMG_0008.jpg", comment: "no way bro tastes sweet" },
+          { src: "IMG_0009.jpg", comment: "that is not tuff tho queen is the best peice in chess" },
+          { src: "IMG_0010.jpg", comment: "what does bro mean by \"physical earth\"" },
+          { src: "IMG_0011.jpg", comment: "warm each other up is sus 🤨" },
+          { src: "IMG_0012.jpg", comment: "How did Toha get involved in this 😭" },
+          { src: "IMG_0013.jpg", comment: "bro is begging at this point" }
+        ]
+      },
+      {
+        date: "October 27, 2026",
+        items: [
+          { src: "ImageReaction.png", comment: "hashir and jay-z tryna live a private life 🤰" }
+        ]
+      },
+      {
+        date: "November 2, 2026",
+        items: [
+          { src: "ImageCord1.png", comment: "i think bro needs to hush hush 🥀" },
+          { src: "ImageCord2.png", comment: "damn i thought it was reserved for jay-z only 🍆💦" }
+        ]
+      }
     ];
+
+    // Flatten for lightbox navigation
+    const allItems = sections.flatMap(section => section.items);
 
     // ========== TABS ==========
     function showTab(tabId, button) {
-      // Hide all pages
-      document.querySelectorAll('.tab-page').forEach(page => {
-        page.classList.remove('active');
-      });
+      document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-      // Remove active from all buttons
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-
-      // Show the selected page
       document.getElementById(tabId).classList.add('active');
-
-      // Make the clicked button active
       button.classList.add('active');
     }
 
-    // ========== GALLERY ==========
+    // ========== BUILD GALLERY ==========
     const gallery = document.getElementById("gallery");
     let currentIndex = 0;
 
-    items.forEach((item, index) => {
-      const card = document.createElement("div");
-      card.className = "card";
+    sections.forEach(section => {
+      // Date header
+      const header = document.createElement("h2");
+      header.className = "date-header";
+      header.textContent = section.date;
+      gallery.appendChild(header);
 
-      const img = document.createElement("img");
-      img.src = `images/${item.src}`;
-      img.alt = item.comment;
-      img.loading = "lazy";
-      img.addEventListener("click", () => openLightbox(index));
+      // Grid for this date
+      const grid = document.createElement("div");
+      grid.className = "gallery-grid";
 
-      const comment = document.createElement("p");
-      comment.className = "comment";
-      comment.textContent = item.comment;
+      section.items.forEach(item => {
+        const globalIndex = allItems.findIndex(i => i.src === item.src);
 
-      card.appendChild(img);
-      card.appendChild(comment);
-      gallery.appendChild(card);
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const img = document.createElement("img");
+        img.src = `images/${item.src}`;
+        img.alt = item.comment;
+        img.loading = "lazy";
+        img.addEventListener("click", () => openLightbox(globalIndex));
+
+        const comment = document.createElement("p");
+        comment.className = "comment";
+        comment.textContent = item.comment;
+
+        card.appendChild(img);
+        card.appendChild(comment);
+        grid.appendChild(card);
+      });
+
+      gallery.appendChild(grid);
     });
 
     // ========== LIGHTBOX ==========
@@ -148,19 +173,19 @@
     }
 
     function updateLightbox() {
-      const item = items[currentIndex];
+      const item = allItems[currentIndex];
       lightboxImg.src = `images/${item.src}`;
       lightboxComment.textContent = item.comment;
-      lightboxCounter.textContent = `${currentIndex + 1} / ${items.length}`;
+      lightboxCounter.textContent = `${currentIndex + 1} / ${allItems.length}`;
     }
 
     function showPrev() {
-      currentIndex = (currentIndex - 1 + items.length) % items.length;
+      currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
       updateLightbox();
     }
 
     function showNext() {
-      currentIndex = (currentIndex + 1) % items.length;
+      currentIndex = (currentIndex + 1) % allItems.length;
       updateLightbox();
     }
 

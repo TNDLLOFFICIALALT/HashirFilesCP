@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +16,7 @@
       <p>Enter the password to continue</p>
       <input type="password" id="password-input" placeholder="Password" autocomplete="off">
       <button id="password-btn">Enter</button>
-      <p id="password-error" aria-live="polite"></p>
+      <p id="password-error"></p>
     </div>
   </div>
 
@@ -30,105 +31,83 @@
 
     <header>
       <h1 id="site-title">HashirFilesCP</h1>
-      <p class="tagline">>The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
+      <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
     </header>
 
-    <nav class="tab-bar" aria-label="Main navigation">
+    <div class="tab-bar">
       <button class="tab-btn active" onclick="showTab('featured', this)">Featured</button>
       <button class="tab-btn" onclick="showTab('archive', this)">Archive</button>
       <button class="tab-btn" onclick="showTab('partners', this)">Partners</button>
       <button class="tab-btn" onclick="showTab('info', this)">Info</button>
-    </nav>
+    </div>
 
     <!-- FEATURED -->
-    <section id="featured" class="tab-page active">
+    <div id="featured" class="tab-page active">
       <div class="featured-box">
-        <img src="images/ImageHZ.jpg" alt="Featured archive image">
+        <img src="images/ImageHZ.jpg" alt="Featured">
         <h2>The Man, The Myth, The Legend</h2>
         <p>Hashir Zia</p>
       </div>
-    </section>
+    </div>
 
     <!-- ARCHIVE -->
-    <section id="archive" class="tab-page">
+    <div id="archive" class="tab-page">
       <div id="gallery"></div>
-    </section>
+    </div>
 
     <!-- PARTNERS -->
-    <section id="partners" class="tab-page">
+    <div id="partners" class="tab-page">
       <div class="partners-container">
         <div class="partner-card">
           <h2>Crescents Blooming Moon</h2>
           <p>Official partner archive</p>
-          <a href="https://thecresecent.github.io/about.html"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="partner-link">
+          <a href="https://thecresecent.github.io/about.html" target="_blank" rel="noopener noreferrer" class="partner-link">
             Visit their site →
           </a>
           <p class="partner-note">Their site is also password protected.</p>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- INFO -->
-    <section id="info" class="tab-page">
+    <div id="info" class="tab-page">
       <div class="info-box">
         <h2>About</h2>
         <p>A private collection of screenshots that were never meant to surface if someone had made the right choice.</p>
-
         <div class="divider"></div>
-
         <h3>Details</h3>
         <p>These Leaks Will Change Your Point Of View About Hashir.</p>
-
         <div class="divider"></div>
-
         <h3>Note</h3>
         <p>We Are Exposing Online Predators, And We Are NOT Harassing Little Kids, Or Doing So In ANY Manner.</p>
       </div>
-    </section>
+    </div>
 
-    <footer>
+    <footer id="site-footer">
       <p>HashirFilesCP • Private Archive</p>
     </footer>
 
   </div>
 
   <!-- LIGHTBOX -->
-  <div class="lightbox"
-       id="lightbox"
-       aria-modal="true"
-       role="dialog"
-       aria-label="Image viewer">
-
-    <button class="nav-btn prev" id="prevBtn" aria-label="Previous image">‹</button>
-    <button class="nav-btn next" id="nextBtn" aria-label="Next image">›</button>
-    <button class="close-btn" id="closeBtn" aria-label="Close viewer">×</button>
+  <div class="lightbox" id="lightbox">
+    <button class="nav-btn prev" id="prevBtn">‹</button>
+    <button class="nav-btn next" id="nextBtn">›</button>
+    <button class="close-btn" id="closeBtn">×</button>
 
     <div class="lightbox-content">
 
-      <!-- IMAGE -->
       <div class="lightbox-image-side">
         <img src="" id="lightboxImg" alt="">
         <p class="lightbox-comment" id="lightboxComment"></p>
         <p class="lightbox-counter" id="lightboxCounter"></p>
       </div>
 
-      <!-- VIDEO + DESCRIPTION -->
-      <aside class="lightbox-video-side" id="lightboxVideoSide">
+      <!-- Video + Description (only shows on October 27 image) -->
+      <div class="lightbox-video-side" id="lightboxVideoSide">
 
-        <video
-          id="secret-video"
-          controls
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="auto"
-        >
+        <video id="secret-video" controls autoplay muted loop playsinline preload="auto">
           <source src="videos/secret.mp4" type="video/mp4">
-          Your browser does not support HTML video.
         </video>
 
         <div class="video-description">
@@ -152,44 +131,39 @@ The children's parents were left devastated, never knowing if they would ever re
 Two missing children. Hundreds of thousands of dollars. And a mystery that would haunt the community for years to come.</p>
         </div>
 
-      </aside>
+      </div>
     </div>
   </div>
 
   <script>
 
-    // ========== PASSWORD SYSTEM ==========
+    // ==========================================
+    // PASSWORD SYSTEM
+    // ==========================================
 
     const CORRECT_PASSWORD = "h@$h!r_69";
 
     const passwordScreen = document.getElementById("password-screen");
     const loadingScreen = document.getElementById("loading-screen");
     const mainSite = document.getElementById("main-site");
-
     const passwordInput = document.getElementById("password-input");
     const passwordBtn = document.getElementById("password-btn");
     const passwordError = document.getElementById("password-error");
 
-    // Keep the website hidden until access is confirmed.
     mainSite.style.display = "none";
     loadingScreen.style.display = "none";
 
-    // sessionStorage remembers access in this tab, including refreshes.
-    // A completely new tab requires the password again.
+    // Same-tab refresh keeps access.
+    // A new tab requires the password again.
     if (sessionStorage.getItem("hashirUnlocked") === "true") {
-
       passwordScreen.style.display = "none";
       mainSite.style.display = "block";
-
     } else {
-
       passwordScreen.style.display = "flex";
       passwordInput.focus();
-
     }
 
     function tryUnlock() {
-
       if (passwordInput.value === CORRECT_PASSWORD) {
 
         sessionStorage.setItem("hashirUnlocked", "true");
@@ -198,156 +172,131 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
         loadingScreen.style.display = "flex";
 
         setTimeout(() => {
-
           loadingScreen.style.display = "none";
           mainSite.style.display = "block";
-
-        }, 1000);
+        }, 1600);
 
       } else {
-
         passwordError.textContent = "Incorrect password";
         passwordInput.value = "";
         passwordInput.focus();
-
       }
     }
 
     passwordBtn.addEventListener("click", tryUnlock);
 
-    passwordInput.addEventListener("keydown", (event) => {
-
-      if (event.key === "Enter") {
-        tryUnlock();
-      }
-
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") tryUnlock();
     });
 
 
-    // ========== TABS ==========
+    // ==========================================
+    // TABS
+    // ==========================================
 
     function showTab(tabId, button) {
-
-      document.querySelectorAll(".tab-page").forEach(page => {
-        page.classList.remove("active");
+      document.querySelectorAll(".tab-page").forEach(p => {
+        p.classList.remove("active");
       });
 
-      document.querySelectorAll(".tab-btn").forEach(tab => {
-        tab.classList.remove("active");
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        b.classList.remove("active");
       });
 
       document.getElementById(tabId).classList.add("active");
       button.classList.add("active");
-
     }
 
 
-    // ========== ARCHIVE DATA ==========
+    // ==========================================
+    // ORIGINAL ARCHIVE DATA
+    // ==========================================
 
     const sections = [
-
       {
         date: "October 25, 2026",
-
         items: [
-          { src: "IMG_0001.jpg", comment: "Archive entry 1" },
-          { src: "IMG_0002.jpg", comment: "Archive entry 2" },
-          { src: "IMG_0003.jpg", comment: "Archive entry 3" },
-          { src: "IMG_0005.jpg", comment: "Archive entry 4" },
-          { src: "IMG_0006.jpg", comment: "Archive entry 5" },
-          { src: "IMG_0008.jpg", comment: "Archive entry 6" },
-          { src: "IMG_0009.jpg", comment: "Archive entry 7" },
-          { src: "IMG_0010.jpg", comment: "Archive entry 8" },
-          { src: "IMG_0011.jpg", comment: "Archive entry 9" },
-          { src: "IMG_0012.jpg", comment: "Archive entry 10" },
-          { src: "IMG_0013.jpg", comment: "Archive entry 11" }
+          { src: "IMG_0001.jpg", comment: "weird" },
+          { src: "IMG_0002.jpg", comment: "what does bro mean by everywhere" },
+          { src: "IMG_0003.jpg", comment: "Let her sleep bro 😭" },
+          { src: "IMG_0005.jpg", comment: "what you mean by change dna 🤨" },
+          { src: "IMG_0006.jpg", comment: "how are kisses ganna change dna" },
+          { src: "IMG_0008.jpg", comment: "no way bro tastes sweet" },
+          { src: "IMG_0009.jpg", comment: "that is not tuff tho queen is the best peice in chess" },
+          { src: "IMG_0010.jpg", comment: "what does bro mean by \"physical earth\"" },
+          { src: "IMG_0011.jpg", comment: "warm each other up is sus 🤨" },
+          { src: "IMG_0012.jpg", comment: "How did Toha get involved in this 😭" },
+          { src: "IMG_0013.jpg", comment: "bro is begging at this point" }
         ]
       },
-
       {
         date: "October 27, 2026",
-
         items: [
           {
             src: "ImageReaction.png",
-            comment: "October 27 archive entry",
+            comment: "hashir and jay-z tryna live a private life 🤰",
             isSecret: true
           }
         ]
       },
-
       {
         date: "November 2, 2026",
-
         items: [
-          { src: "ImageCord1.png", comment: "Archive entry 12" },
-          { src: "ImageCord2.png", comment: "Archive entry 13" }
+          { src: "ImageCord1.png", comment: "i think bro needs to hush hush 🥀" },
+          { src: "ImageCord2.png", comment: "damn i thought it was reserved for jay-z only 🍆💦" }
         ]
       }
-
     ];
 
-    const allItems = sections.flatMap(section => section.items);
+    const allItems = sections.flatMap(s => s.items);
+
+
+    // ==========================================
+    // BUILD GALLERY
+    // ==========================================
 
     const gallery = document.getElementById("gallery");
-
     let currentIndex = 0;
 
-
-    // ========== BUILD GALLERY ==========
-
     sections.forEach(section => {
-
       const header = document.createElement("h2");
-
       header.className = "date-header";
       header.textContent = section.date;
-
       gallery.appendChild(header);
 
       const grid = document.createElement("div");
-
       grid.className = "gallery-grid";
 
       section.items.forEach(item => {
-
         const globalIndex = allItems.indexOf(item);
 
-        const card = document.createElement("article");
-
+        const card = document.createElement("div");
         card.className = "card";
 
         const img = document.createElement("img");
-
         img.src = `images/${item.src}`;
         img.alt = item.comment;
         img.loading = "lazy";
-
-        img.addEventListener("click", () => {
-          openLightbox(globalIndex);
-        });
+        img.addEventListener("click", () => openLightbox(globalIndex));
 
         const comment = document.createElement("p");
-
         comment.className = "comment";
         comment.textContent = item.comment;
 
         card.appendChild(img);
         card.appendChild(comment);
-
         grid.appendChild(card);
-
       });
 
       gallery.appendChild(grid);
-
     });
 
 
-    // ========== LIGHTBOX ==========
+    // ==========================================
+    // LIGHTBOX
+    // ==========================================
 
     const lightbox = document.getElementById("lightbox");
-
     const lightboxImg = document.getElementById("lightboxImg");
     const lightboxComment = document.getElementById("lightboxComment");
     const lightboxCounter = document.getElementById("lightboxCounter");
@@ -355,71 +304,56 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     const videoSide = document.getElementById("lightboxVideoSide");
     const video = document.getElementById("secret-video");
 
-
     function openLightbox(index) {
-
       currentIndex = index;
-
       updateLightbox();
 
       lightbox.classList.add("active");
-
       document.body.style.overflow = "hidden";
-
     }
 
-
     function stopVideo() {
-
       video.pause();
-
-      video.autoplay = false;
 
       try {
         video.currentTime = 0;
       } catch (error) {
-        // Video metadata may not be ready.
+        // Video metadata may not be ready yet.
       }
-
     }
-
 
     function closeLightbox() {
-
       lightbox.classList.remove("active");
-
       document.body.style.overflow = "";
 
-      stopVideo();
+      videoSide.classList.remove("video-enter");
+      videoSide.style.display = "none";
 
+      stopVideo();
     }
 
-
     function updateLightbox() {
-
       const item = allItems[currentIndex];
 
       lightboxImg.src = `images/${item.src}`;
       lightboxImg.alt = item.comment;
-
       lightboxComment.textContent = item.comment;
-
-      lightboxCounter.textContent =
-        `${currentIndex + 1} / ${allItems.length}`;
-
-
-      // SPECIAL IMAGE WITH VIDEO
+      lightboxCounter.textContent = `${currentIndex + 1} / ${allItems.length}`;
 
       if (item.isSecret) {
 
         videoSide.style.display = "flex";
+        videoSide.classList.remove("video-enter");
+
+        // Restart the slide-in animation.
+        void videoSide.offsetWidth;
+        videoSide.classList.add("video-enter");
 
         video.muted = true;
         video.loop = true;
         video.autoplay = true;
         video.playsInline = true;
 
-        // Start the video from the beginning.
         video.pause();
 
         try {
@@ -429,143 +363,113 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
         }
 
         const playVideo = () => {
-
           const playPromise = video.play();
 
           if (playPromise && typeof playPromise.catch === "function") {
-
             playPromise.catch(() => {
-              // Browser autoplay restrictions may require pressing Play.
+              // Browser autoplay restrictions may require manual playback.
             });
-
           }
-
         };
 
         if (video.readyState >= 2) {
-
           playVideo();
-
         } else {
-
           video.addEventListener("canplay", playVideo, { once: true });
-
           video.load();
-
         }
 
       } else {
-
+        videoSide.classList.remove("video-enter");
         videoSide.style.display = "none";
-
         stopVideo();
-
       }
-
     }
 
 
-    // CLOSE BUTTON
+    // ==========================================
+    // LIGHTBOX BUTTONS
+    // ==========================================
 
     document.getElementById("closeBtn").addEventListener("click", closeLightbox);
 
-
-    // PREVIOUS IMAGE
-
     document.getElementById("prevBtn").addEventListener("click", () => {
-
       currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
-
       updateLightbox();
-
     });
-
-
-    // NEXT IMAGE
 
     document.getElementById("nextBtn").addEventListener("click", () => {
-
       currentIndex = (currentIndex + 1) % allItems.length;
-
       updateLightbox();
-
     });
 
 
+    // ==========================================
     // CLICK OUTSIDE TO CLOSE
+    // ==========================================
 
-    lightbox.addEventListener("click", (event) => {
-
-      if (event.target === lightbox) {
-        closeLightbox();
-      }
-
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
     });
 
 
-    // KEYBOARD CONTROLS
+    // ==========================================
+    // KEYBOARD LIGHTBOX CONTROLS
+    // ==========================================
 
-    document.addEventListener("keydown", (event) => {
-
+    document.addEventListener("keydown", (e) => {
       if (!lightbox.classList.contains("active")) return;
 
-      if (event.key === "Escape") {
-        closeLightbox();
-      }
+      if (e.key === "Escape") closeLightbox();
 
-      if (event.key === "ArrowLeft") {
-
+      if (e.key === "ArrowLeft") {
         currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
-
         updateLightbox();
-
       }
 
-      if (event.key === "ArrowRight") {
-
+      if (e.key === "ArrowRight") {
         currentIndex = (currentIndex + 1) % allItems.length;
-
         updateLightbox();
-
       }
-
     });
 
 
-    // ========== TITLE EASTER EGG ==========
+    // ==========================================
+    // EASTER EGG 1: OCTOBER 27 SECRET VIDEO
+    // Clicking the October 27 image opens the video.
+    // ==========================================
+
+
+    // ==========================================
+    // EASTER EGG 2: TRIPLE-CLICK TITLE
+    // ==========================================
 
     let titleClicks = 0;
     let titleClickTimer;
 
     document.getElementById("site-title").addEventListener("click", () => {
-
       titleClicks++;
 
       clearTimeout(titleClickTimer);
 
       if (titleClicks === 3) {
-
-        alert("You found the title easter egg");
-
+        alert("You found the title easter egg!");
         titleClicks = 0;
-
       } else {
-
         titleClickTimer = setTimeout(() => {
           titleClicks = 0;
         }, 700);
-
       }
-
     });
 
 
-    // ========== KEYBOARD EASTER EGG ==========
+    // ==========================================
+    // EASTER EGG 3: TYPE JAYZ
+    // ==========================================
 
     let typed = "";
 
-    document.addEventListener("keydown", (event) => {
-
+    document.addEventListener("keydown", (e) => {
       if (
         document.activeElement &&
         ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
@@ -573,22 +477,86 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
         return;
       }
 
-      if (event.key.length !== 1) return;
+      if (e.key.length !== 1) return;
 
-      typed += event.key.toLowerCase();
+      typed += e.key.toLowerCase();
 
       if (typed.length > 4) {
         typed = typed.slice(-4);
       }
 
       if (typed === "jayz") {
-
-        alert("Jay-Z mode activated");
-
+        alert("Jay-Z mode activated!");
         typed = "";
+      }
+    });
 
+
+    // ==========================================
+    // EASTER EGG 4: KONAMI CODE
+    // ↑ ↑ ↓ ↓ ← → ← → B A
+    // ==========================================
+
+    const konamiCode = [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a"
+    ];
+
+    let konamiPosition = 0;
+
+    document.addEventListener("keydown", (e) => {
+      if (
+        document.activeElement &&
+        ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
+      ) {
+        return;
       }
 
+      const key = e.key.length === 1
+        ? e.key.toLowerCase()
+        : e.key;
+
+      if (key === konamiCode[konamiPosition]) {
+        konamiPosition++;
+
+        if (konamiPosition === konamiCode.length) {
+          alert("🏆 KONAMI CODE ACTIVATED! You found the secret!");
+          konamiPosition = 0;
+        }
+      } else {
+        konamiPosition = key === konamiCode[0] ? 1 : 0;
+      }
+    });
+
+
+    // ==========================================
+    // EASTER EGG 5: FIVE FOOTER CLICKS
+    // ==========================================
+
+    let footerClicks = 0;
+    let footerClickTimer;
+
+    document.getElementById("site-footer").addEventListener("click", () => {
+      footerClicks++;
+
+      clearTimeout(footerClickTimer);
+
+      if (footerClicks >= 5) {
+        alert("👑 FIVE CLICKS. YOU HAVE UNLOCKED THE FORBIDDEN FOOTER.");
+        footerClicks = 0;
+      } else {
+        footerClickTimer = setTimeout(() => {
+          footerClicks = 0;
+        }, 2000);
+      }
     });
 
   </script>

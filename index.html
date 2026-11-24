@@ -92,20 +92,40 @@
     <button class="nav-btn prev" id="prevBtn">‹</button>
     <button class="nav-btn next" id="nextBtn">›</button>
     <button class="close-btn" id="closeBtn">×</button>
-    <div class="lightbox-inner">
-      <img src="" id="lightboxImg" alt="">
-      <p class="lightbox-comment" id="lightboxComment"></p>
-      <p class="lightbox-counter" id="lightboxCounter"></p>
-    </div>
-  </div>
 
-  <!-- SECRET VIDEO (only from Oct 27 image) -->
-  <div id="secret-video-panel">
-    <button id="close-video">×</button>
-    <video id="secret-video" controls>
-      <source src="videos/secret.mp4" type="video/mp4">
-    </video>
-    <p class="video-label">October 27 • Classified</p>
+    <div class="lightbox-content">
+      <div class="lightbox-image-side">
+        <img src="" id="lightboxImg" alt="">
+        <p class="lightbox-comment" id="lightboxComment"></p>
+        <p class="lightbox-counter" id="lightboxCounter"></p>
+      </div>
+
+      <!-- Video + Description (only shows on October 27 image) -->
+      <div class="lightbox-video-side" id="lightboxVideoSide">
+        <video id="secret-video" controls>
+          <source src="videos/secret.mp4" type="video/mp4">
+        </video>
+        <div class="video-description">
+          <p>**For those who don't know...**
+
+In 2026, a high school student named Hashir Zia became the subject of one of the most disturbing criminal investigations in local history.
+
+Hashir was frequently seen spending time with younger children. He appeared friendly toward them, and the children seemed to trust him.
+
+However, everything changed when two young boys were reportedly spotted receiving Halloween-sized candy from Hashir Zia. Shortly afterward, both children mysteriously disappeared.
+
+As the investigation unfolded, authorities allegedly uncovered evidence suggesting that the children had been held captive and brutally abused for several days before being killed. Even more horrifyingly, investigators reportedly discovered evidence that their bodies had been burned to ashes in an attempt to destroy the evidence.
+
+But the investigation didn't end there.
+
+Among the evidence recovered were checks worth hundreds of thousands of dollars. This discovery sparked disturbing speculation about a possible underground operation involving the sale of human remains for profit.
+
+The children's parents were left devastated, never knowing if they would ever receive answers about what happened to their sons.
+
+**Two missing children. Hundreds of thousands of dollars. And a mystery that would haunt the community for years to come.**</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -119,11 +139,9 @@
     const passwordBtn = document.getElementById("password-btn");
     const passwordError = document.getElementById("password-error");
 
-    // Hide main site by default
     mainSite.style.display = "none";
     loadingScreen.style.display = "none";
 
-    // Check if already unlocked
     if (localStorage.getItem("hashirUnlocked") === "true") {
       passwordScreen.style.display = "none";
       mainSite.style.display = "block";
@@ -217,15 +235,7 @@
         img.src = `images/${item.src}`;
         img.alt = item.comment;
         img.loading = "lazy";
-
-        if (item.isSecret) {
-          // Clicking Oct 27 image opens secret video
-          img.addEventListener("click", () => {
-            document.getElementById("secret-video-panel").classList.add("active");
-          });
-        } else {
-          img.addEventListener("click", () => openLightbox(globalIndex));
-        }
+        img.addEventListener("click", () => openLightbox(globalIndex));
 
         const comment = document.createElement("p");
         comment.className = "comment";
@@ -255,6 +265,8 @@
     function closeLightbox() {
       lightbox.classList.remove("active");
       document.body.style.overflow = "";
+      const video = document.getElementById("secret-video");
+      video.pause();
     }
 
     function updateLightbox() {
@@ -262,6 +274,18 @@
       lightboxImg.src = `images/${item.src}`;
       lightboxComment.textContent = item.comment;
       lightboxCounter.textContent = `${currentIndex + 1} / ${allItems.length}`;
+
+      const videoSide = document.getElementById("lightboxVideoSide");
+      const video = document.getElementById("secret-video");
+
+      if (item.isSecret) {
+        videoSide.style.display = "flex";
+        video.currentTime = 0;
+        video.play();
+      } else {
+        videoSide.style.display = "none";
+        video.pause();
+      }
     }
 
     document.getElementById("closeBtn").addEventListener("click", closeLightbox);
@@ -278,16 +302,20 @@
       if (e.target === lightbox) closeLightbox();
     });
 
-    // ========== SECRET VIDEO ==========
-    document.getElementById("close-video").addEventListener("click", () => {
-      const panel = document.getElementById("secret-video-panel");
-      const video = document.getElementById("secret-video");
-      video.pause();
-      panel.classList.remove("active");
+    document.addEventListener("keydown", (e) => {
+      if (!lightbox.classList.contains("active")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") {
+        currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+        updateLightbox();
+      }
+      if (e.key === "ArrowRight") {
+        currentIndex = (currentIndex + 1) % allItems.length;
+        updateLightbox();
+      }
     });
 
     // ========== EASTER EGGS ==========
-    // Triple click title
     let titleClicks = 0;
     document.getElementById("site-title").addEventListener("click", () => {
       titleClicks++;
@@ -298,7 +326,6 @@
       setTimeout(() => titleClicks = 0, 700);
     });
 
-    // Type "jayz"
     let typed = "";
     document.addEventListener("keydown", (e) => {
       if (document.activeElement.tagName === "INPUT") return;

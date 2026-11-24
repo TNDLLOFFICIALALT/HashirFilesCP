@@ -20,10 +20,57 @@
     </div>
   </div>
 
-  <!-- LOADING SCREEN -->
+  <!-- CHESS LOADING SCREEN -->
   <div id="loading-screen">
-    <div class="loader"></div>
-    <p>Unlocking archive...</p>
+    <div class="loading-container">
+
+      <div class="loading-chess-icon">♞</div>
+
+      <h2>Just a second lil bro, I gotchu.</h2>
+      <p class="loading-subtitle">Preparing the archive...</p>
+
+      <div class="loading-video-frame">
+        <video
+          id="loading-video"
+          autoplay
+          playsinline
+          preload="auto"
+          disablepictureinpicture
+          controlslist="nodownload noplaybackrate"
+        >
+          <source src="videos/AtifBeatsHashirInChess.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+
+      <div class="chess-progress-section">
+        <div class="progress-labels">
+          <span>WHITE'S TURN</span>
+          <span id="progress-percent">0%</span>
+        </div>
+
+        <div class="chess-progress-track">
+          <div class="chess-progress-fill" id="progress-fill"></div>
+
+          <div class="pawn-marker" id="pawn-marker">
+            <span id="pawn-piece">♟</span>
+          </div>
+        </div>
+
+        <div class="progress-status" id="progress-status">
+          The pawn is advancing...
+        </div>
+      </div>
+
+      <div class="loading-error" id="loading-error" aria-live="polite"></div>
+
+      <button id="start-loading-video" class="start-video-btn" hidden>
+        Start the video
+      </button>
+
+      <div class="loading-footer">HASHIRFILESCP • ARCHIVE ACCESS</div>
+
+    </div>
   </div>
 
   <!-- MAIN SITE -->
@@ -86,7 +133,6 @@
     <footer id="site-footer">
       <p>HashirFilesCP • Private Archive</p>
     </footer>
-
   </div>
 
   <!-- LIGHTBOX -->
@@ -103,9 +149,8 @@
         <p class="lightbox-counter" id="lightboxCounter"></p>
       </div>
 
-      <!-- Video + Description (only shows on October 27 image) -->
+      <!-- SECRET VIDEO + DESCRIPTION -->
       <div class="lightbox-video-side" id="lightboxVideoSide">
-
         <video id="secret-video" controls autoplay muted loop playsinline preload="auto">
           <source src="videos/secret.mp4" type="video/mp4">
         </video>
@@ -130,8 +175,8 @@ The children's parents were left devastated, never knowing if they would ever re
 
 Two missing children. Hundreds of thousands of dollars. And a mystery that would haunt the community for years to come.</p>
         </div>
-
       </div>
+
     </div>
   </div>
 
@@ -146,15 +191,28 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     const passwordScreen = document.getElementById("password-screen");
     const loadingScreen = document.getElementById("loading-screen");
     const mainSite = document.getElementById("main-site");
+
     const passwordInput = document.getElementById("password-input");
     const passwordBtn = document.getElementById("password-btn");
     const passwordError = document.getElementById("password-error");
 
+    const loadingVideo = document.getElementById("loading-video");
+    const startVideoBtn = document.getElementById("start-loading-video");
+    const loadingError = document.getElementById("loading-error");
+
+    const progressFill = document.getElementById("progress-fill");
+    const progressPercent = document.getElementById("progress-percent");
+    const progressStatus = document.getElementById("progress-status");
+    const pawnPiece = document.getElementById("pawn-piece");
+    const pawnMarker = document.getElementById("pawn-marker");
+
     mainSite.style.display = "none";
     loadingScreen.style.display = "none";
 
+    let loadingFinished = false;
+
     // Same-tab refresh keeps access.
-    // A new tab requires the password again.
+    // A new tab asks for the password again.
     if (sessionStorage.getItem("hashirUnlocked") === "true") {
       passwordScreen.style.display = "none";
       mainSite.style.display = "block";
@@ -163,18 +221,112 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
       passwordInput.focus();
     }
 
+    function updateLoadingProgress() {
+      if (!loadingVideo.duration || !Number.isFinite(loadingVideo.duration)) {
+        return;
+      }
+
+      const percent = Math.min(
+        100,
+        (loadingVideo.currentTime / loadingVideo.duration) * 100
+      );
+
+      // Keep the bar below 100 until the video actually ends.
+      const safePercent = Math.min(percent, 99.5);
+
+      progressFill.style.width = safePercent + "%";
+      pawnMarker.style.left = safePercent + "%";
+      progressPercent.textContent = Math.floor(safePercent) + "%";
+
+      if (safePercent >= 50) {
+        progressStatus.textContent = "The pawn is getting closer...";
+      } else {
+        progressStatus.textContent = "The pawn is advancing...";
+      }
+    }
+
+    function finishLoading() {
+      if (loadingFinished) return;
+
+      loadingFinished = true;
+
+      progressFill.style.width = "100%";
+      pawnMarker.style.left = "100%";
+      progressPercent.textContent = "100%";
+
+      pawnPiece.textContent = "♛";
+      pawnMarker.classList.add("queen-reached");
+
+      progressStatus.textContent = "CHECKMATE. QUEEN PROMOTED.";
+
+      setTimeout(() => {
+        loadingScreen.style.display = "none";
+        mainSite.style.display = "block";
+      }, 1100);
+    }
+
+    function startLoadingVideo() {
+      loadingError.textContent = "";
+      startVideoBtn.hidden = true;
+
+      loadingVideo.muted = false;
+      loadingVideo.volume = 1;
+
+      const playAttempt = loadingVideo.play();
+
+      if (playAttempt && typeof playAttempt.catch === "function") {
+        playAttempt.catch(() => {
+          startVideoBtn.hidden = false;
+          loadingError.textContent =
+            "Your browser blocked autoplay. Press the button to start.";
+        });
+      }
+    }
+
+    loadingVideo.addEventListener("timeupdate", updateLoadingProgress);
+
+    loadingVideo.addEventListener("ended", finishLoading);
+
+    loadingVideo.addEventListener("error", () => {
+      if (!loadingFinished) {
+        loadingError.textContent =
+          "The loading video could not be loaded. Check the video file and try again.";
+      }
+    });
+
+    startVideoBtn.addEventListener("click", startLoadingVideo);
+
+    // Hide context menu and prevent ordinary keyboard pause shortcuts.
+    loadingVideo.addEventListener("contextmenu", event => {
+      event.preventDefault();
+    });
+
+    loadingVideo.addEventListener("keydown", event => {
+      event.preventDefault();
+    });
+
     function tryUnlock() {
       if (passwordInput.value === CORRECT_PASSWORD) {
-
         sessionStorage.setItem("hashirUnlocked", "true");
 
         passwordScreen.style.display = "none";
         loadingScreen.style.display = "flex";
 
-        setTimeout(() => {
-          loadingScreen.style.display = "none";
-          mainSite.style.display = "block";
-        }, 1600);
+        loadingFinished = false;
+
+        progressFill.style.width = "0%";
+        pawnMarker.style.left = "0%";
+        progressPercent.textContent = "0%";
+        pawnPiece.textContent = "♟";
+        pawnMarker.classList.remove("queen-reached");
+        progressStatus.textContent = "The pawn is advancing...";
+
+        loadingVideo.currentTime = 0;
+        loadingVideo.muted = false;
+        loadingVideo.volume = 1;
+
+        // Attempt playback directly from the password-button interaction.
+        startLoadingVideo();
 
       } else {
         passwordError.textContent = "Incorrect password";
@@ -185,8 +337,10 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
     passwordBtn.addEventListener("click", tryUnlock);
 
-    passwordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") tryUnlock();
+    passwordInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        tryUnlock();
+      }
     });
 
 
@@ -195,12 +349,12 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     // ==========================================
 
     function showTab(tabId, button) {
-      document.querySelectorAll(".tab-page").forEach(p => {
-        p.classList.remove("active");
+      document.querySelectorAll(".tab-page").forEach(page => {
+        page.classList.remove("active");
       });
 
-      document.querySelectorAll(".tab-btn").forEach(b => {
-        b.classList.remove("active");
+      document.querySelectorAll(".tab-btn").forEach(tab => {
+        tab.classList.remove("active");
       });
 
       document.getElementById(tabId).classList.add("active");
@@ -248,7 +402,7 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
       }
     ];
 
-    const allItems = sections.flatMap(s => s.items);
+    const allItems = sections.flatMap(section => section.items);
 
 
     // ==========================================
@@ -302,33 +456,26 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     const lightboxCounter = document.getElementById("lightboxCounter");
 
     const videoSide = document.getElementById("lightboxVideoSide");
-    const video = document.getElementById("secret-video");
+    const secretVideo = document.getElementById("secret-video");
 
     function openLightbox(index) {
       currentIndex = index;
       updateLightbox();
-
       lightbox.classList.add("active");
       document.body.style.overflow = "hidden";
     }
 
     function stopVideo() {
-      video.pause();
+      secretVideo.pause();
 
       try {
-        video.currentTime = 0;
-      } catch (error) {
-        // Video metadata may not be ready yet.
-      }
+        secretVideo.currentTime = 0;
+      } catch (error) {}
     }
 
     function closeLightbox() {
       lightbox.classList.remove("active");
       document.body.style.overflow = "";
-
-      videoSide.classList.remove("video-enter");
-      videoSide.style.display = "none";
-
       stopVideo();
     }
 
@@ -336,60 +483,46 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
       const item = allItems[currentIndex];
 
       lightboxImg.src = `images/${item.src}`;
-      lightboxImg.alt = item.comment;
       lightboxComment.textContent = item.comment;
-      lightboxCounter.textContent = `${currentIndex + 1} / ${allItems.length}`;
+      lightboxCounter.textContent =
+        `${currentIndex + 1} / ${allItems.length}`;
 
       if (item.isSecret) {
-
         videoSide.style.display = "flex";
-        videoSide.classList.remove("video-enter");
 
-        // Restart the slide-in animation.
-        void videoSide.offsetWidth;
-        videoSide.classList.add("video-enter");
+        secretVideo.muted = false;
+        secretVideo.loop = true;
+        secretVideo.autoplay = true;
+        secretVideo.playsInline = true;
 
-        video.muted = false;
-        video.loop = true;
-        video.autoplay = true;
-        video.playsInline = true;
-
-        video.pause();
+        secretVideo.pause();
 
         try {
-          video.currentTime = 0;
-        } catch (error) {
-          // Wait for video metadata.
-        }
+          secretVideo.currentTime = 0;
+        } catch (error) {}
 
-        const playVideo = () => {
-          const playPromise = video.play();
+        const playSecretVideo = () => {
+          const playPromise = secretVideo.play();
 
           if (playPromise && typeof playPromise.catch === "function") {
-            playPromise.catch(() => {
-              // Browser autoplay restrictions may require manual playback.
-            });
+            playPromise.catch(() => {});
           }
         };
 
-        if (video.readyState >= 2) {
-          playVideo();
+        if (secretVideo.readyState >= 2) {
+          playSecretVideo();
         } else {
-          video.addEventListener("canplay", playVideo, { once: true });
-          video.load();
+          secretVideo.addEventListener("canplay", playSecretVideo, {
+            once: true
+          });
+          secretVideo.load();
         }
 
       } else {
-        videoSide.classList.remove("video-enter");
         videoSide.style.display = "none";
         stopVideo();
       }
     }
-
-
-    // ==========================================
-    // LIGHTBOX BUTTONS
-    // ==========================================
 
     document.getElementById("closeBtn").addEventListener("click", closeLightbox);
 
@@ -403,31 +536,23 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
       updateLightbox();
     });
 
-
-    // ==========================================
-    // CLICK OUTSIDE TO CLOSE
-    // ==========================================
-
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) closeLightbox();
+    lightbox.addEventListener("click", event => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
     });
 
-
-    // ==========================================
-    // KEYBOARD LIGHTBOX CONTROLS
-    // ==========================================
-
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", event => {
       if (!lightbox.classList.contains("active")) return;
 
-      if (e.key === "Escape") closeLightbox();
+      if (event.key === "Escape") closeLightbox();
 
-      if (e.key === "ArrowLeft") {
+      if (event.key === "ArrowLeft") {
         currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
         updateLightbox();
       }
 
-      if (e.key === "ArrowRight") {
+      if (event.key === "ArrowRight") {
         currentIndex = (currentIndex + 1) % allItems.length;
         updateLightbox();
       }
@@ -435,13 +560,7 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
 
     // ==========================================
-    // EASTER EGG 1: OCTOBER 27 SECRET VIDEO
-    // Clicking the October 27 image opens the video.
-    // ==========================================
-
-
-    // ==========================================
-    // EASTER EGG 2: TRIPLE-CLICK TITLE
+    // EASTER EGG 1: TRIPLE-CLICK TITLE
     // ==========================================
 
     let titleClicks = 0;
@@ -449,7 +568,6 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
     document.getElementById("site-title").addEventListener("click", () => {
       titleClicks++;
-
       clearTimeout(titleClickTimer);
 
       if (titleClicks === 3) {
@@ -464,22 +582,20 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
 
     // ==========================================
-    // EASTER EGG 3: TYPE JAYZ
+    // EASTER EGG 2: TYPE JAYZ
     // ==========================================
 
     let typed = "";
 
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", event => {
       if (
         document.activeElement &&
         ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
-      ) {
-        return;
-      }
+      ) return;
 
-      if (e.key.length !== 1) return;
+      if (event.key.length !== 1) return;
 
-      typed += e.key.toLowerCase();
+      typed += event.key.toLowerCase();
 
       if (typed.length > 4) {
         typed = typed.slice(-4);
@@ -493,8 +609,7 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
 
     // ==========================================
-    // EASTER EGG 4: KONAMI CODE
-    // ↑ ↑ ↓ ↓ ← → ← → B A
+    // EASTER EGG 3: KONAMI CODE
     // ==========================================
 
     const konamiCode = [
@@ -512,17 +627,15 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
     let konamiPosition = 0;
 
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", event => {
       if (
         document.activeElement &&
         ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
-      ) {
-        return;
-      }
+      ) return;
 
-      const key = e.key.length === 1
-        ? e.key.toLowerCase()
-        : e.key;
+      const key = event.key.length === 1
+        ? event.key.toLowerCase()
+        : event.key;
 
       if (key === konamiCode[konamiPosition]) {
         konamiPosition++;
@@ -538,7 +651,7 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
 
     // ==========================================
-    // EASTER EGG 5: FIVE FOOTER CLICKS
+    // EASTER EGG 4: FIVE FOOTER CLICKS
     // ==========================================
 
     let footerClicks = 0;
@@ -546,7 +659,6 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
     document.getElementById("site-footer").addEventListener("click", () => {
       footerClicks++;
-
       clearTimeout(footerClickTimer);
 
       if (footerClicks >= 5) {

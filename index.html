@@ -15,7 +15,7 @@
       <p>Enter the password to continue</p>
       <input type="password" id="password-input" placeholder="Password" autocomplete="off">
       <button id="password-btn">Enter</button>
-      <p id="password-error" class="error"></p>
+      <p id="password-error"></p>
     </div>
   </div>
 
@@ -25,15 +25,14 @@
     <p>Unlocking archive...</p>
   </div>
 
-  <!-- MAIN SITE (hidden until unlocked) -->
-  <div id="main-site" class="hidden">
+  <!-- MAIN SITE -->
+  <div id="main-site">
 
     <header>
       <h1 id="site-title">HashirFilesCP</h1>
       <p class="tagline">The Consequences Of Hashir Not Investing In Sec-Ops Is Leaking His Dm's</p>
     </header>
 
-    <!-- TABS -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="showTab('featured', this)">Featured</button>
       <button class="tab-btn" onclick="showTab('archive', this)">Archive</button>
@@ -44,7 +43,7 @@
     <!-- FEATURED -->
     <div id="featured" class="tab-page active">
       <div class="featured-box">
-        <img src="images/ImageHZ.jpg" alt="Featured" id="featured-img">
+        <img src="images/ImageHZ.jpg" alt="Featured">
         <h2>The Man, The Myth, The Legend</h2>
         <p>Hashir Zia</p>
       </div>
@@ -64,9 +63,7 @@
           <a href="https://thecresecent.github.io/about.html" target="_blank" class="partner-link">
             Visit their site →
           </a>
-          <div class="partner-note">
-            <small>Their site is also password protected.</small>
-          </div>
+          <p class="partner-note">Their site is also password protected.</p>
         </div>
       </div>
     </div>
@@ -102,19 +99,19 @@
     </div>
   </div>
 
-  <!-- SECRET VIDEO PANEL (Easter Egg) -->
-  <div id="secret-video-panel" class="hidden">
+  <!-- SECRET VIDEO (only from Oct 27 image) -->
+  <div id="secret-video-panel">
     <button id="close-video">×</button>
     <video id="secret-video" controls>
       <source src="videos/secret.mp4" type="video/mp4">
-      Your browser does not support the video tag.
     </video>
     <p class="video-label">October 27 • Classified</p>
   </div>
 
   <script>
-    // ====================== PASSWORD SYSTEM ======================
+    // ========== PASSWORD ==========
     const CORRECT_PASSWORD = "h@$h!r_69";
+
     const passwordScreen = document.getElementById("password-screen");
     const loadingScreen = document.getElementById("loading-screen");
     const mainSite = document.getElementById("main-site");
@@ -122,24 +119,26 @@
     const passwordBtn = document.getElementById("password-btn");
     const passwordError = document.getElementById("password-error");
 
+    // Hide main site by default
+    mainSite.style.display = "none";
+    loadingScreen.style.display = "none";
+
     // Check if already unlocked
     if (localStorage.getItem("hashirUnlocked") === "true") {
       passwordScreen.style.display = "none";
-      mainSite.classList.remove("hidden");
+      mainSite.style.display = "block";
     }
 
     function tryUnlock() {
-      const entered = passwordInput.value;
-      if (entered === CORRECT_PASSWORD) {
+      if (passwordInput.value === CORRECT_PASSWORD) {
         localStorage.setItem("hashirUnlocked", "true");
         passwordScreen.style.display = "none";
         loadingScreen.style.display = "flex";
 
-        // Fake loading for dramatic effect
         setTimeout(() => {
           loadingScreen.style.display = "none";
-          mainSite.classList.remove("hidden");
-        }, 1800);
+          mainSite.style.display = "block";
+        }, 1600);
       } else {
         passwordError.textContent = "Incorrect password";
         passwordInput.value = "";
@@ -152,15 +151,15 @@
       if (e.key === "Enter") tryUnlock();
     });
 
-    // ====================== TABS ======================
+    // ========== TABS ==========
     function showTab(tabId, button) {
-      document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       button.classList.add('active');
     }
 
-    // ====================== DATA ======================
+    // ========== DATA ==========
     const sections = [
       {
         date: "October 25, 2026",
@@ -195,7 +194,7 @@
 
     const allItems = sections.flatMap(s => s.items);
 
-    // ====================== BUILD GALLERY ======================
+    // ========== BUILD GALLERY ==========
     const gallery = document.getElementById("gallery");
     let currentIndex = 0;
 
@@ -210,6 +209,7 @@
 
       section.items.forEach(item => {
         const globalIndex = allItems.findIndex(i => i.src === item.src);
+
         const card = document.createElement("div");
         card.className = "card";
 
@@ -218,12 +218,10 @@
         img.alt = item.comment;
         img.loading = "lazy";
 
-        // Easter Egg 1: Click October 27 image → open secret video
         if (item.isSecret) {
-          img.style.cursor = "pointer";
-          img.addEventListener("click", (e) => {
-            e.stopPropagation();
-            document.getElementById("secret-video-panel").classList.remove("hidden");
+          // Clicking Oct 27 image opens secret video
+          img.addEventListener("click", () => {
+            document.getElementById("secret-video-panel").classList.add("active");
           });
         } else {
           img.addEventListener("click", () => openLightbox(globalIndex));
@@ -241,7 +239,7 @@
       gallery.appendChild(grid);
     });
 
-    // ====================== LIGHTBOX ======================
+    // ========== LIGHTBOX ==========
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightboxImg");
     const lightboxComment = document.getElementById("lightboxComment");
@@ -266,91 +264,50 @@
       lightboxCounter.textContent = `${currentIndex + 1} / ${allItems.length}`;
     }
 
-    function showPrev() {
+    document.getElementById("closeBtn").addEventListener("click", closeLightbox);
+    document.getElementById("prevBtn").addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
       updateLightbox();
-    }
-
-    function showNext() {
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % allItems.length;
       updateLightbox();
-    }
-
-    document.getElementById("closeBtn").addEventListener("click", closeLightbox);
-    document.getElementById("prevBtn").addEventListener("click", showPrev);
-    document.getElementById("nextBtn").addEventListener("click", showNext);
+    });
 
     lightbox.addEventListener("click", (e) => {
       if (e.target === lightbox) closeLightbox();
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (!lightbox.classList.contains("active")) return;
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowLeft") showPrev();
-      if (e.key === "ArrowRight") showNext();
+    // ========== SECRET VIDEO ==========
+    document.getElementById("close-video").addEventListener("click", () => {
+      const panel = document.getElementById("secret-video-panel");
+      const video = document.getElementById("secret-video");
+      video.pause();
+      panel.classList.remove("active");
     });
 
-    // ====================== EASTER EGGS ======================
-
-    // 1. Already done above (Oct 27 image → video)
-
-    // 2. Triple-click the main title
+    // ========== EASTER EGGS ==========
+    // Triple click title
     let titleClicks = 0;
     document.getElementById("site-title").addEventListener("click", () => {
       titleClicks++;
       if (titleClicks === 3) {
-        alert("You found the title easter egg 👀\nHashir was here.");
+        alert("You found the title easter egg");
         titleClicks = 0;
       }
-      setTimeout(() => titleClicks = 0, 800);
+      setTimeout(() => titleClicks = 0, 700);
     });
 
-    // 3. Type "jayz" anywhere
+    // Type "jayz"
     let typed = "";
     document.addEventListener("keydown", (e) => {
       if (document.activeElement.tagName === "INPUT") return;
       typed += e.key.toLowerCase();
       if (typed.length > 4) typed = typed.slice(-4);
       if (typed === "jayz") {
-        alert("Jay-Z mode activated 🎤");
+        alert("Jay-Z mode activated");
         typed = "";
       }
-    });
-
-    // 4. Konami code (↑↑↓↓←→←→BA)
-    const konami = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-    let konamiIndex = 0;
-    document.addEventListener("keydown", (e) => {
-      if (e.key === konami[konamiIndex]) {
-        konamiIndex++;
-        if (konamiIndex === konami.length) {
-          document.body.style.filter = "hue-rotate(90deg)";
-          setTimeout(() => document.body.style.filter = "", 3000);
-          alert("Konami code accepted. Reality slightly altered.");
-          konamiIndex = 0;
-        }
-      } else {
-        konamiIndex = 0;
-      }
-    });
-
-    // 5. Click the footer 5 times
-    let footerClicks = 0;
-    document.querySelector("footer").addEventListener("click", () => {
-      footerClicks++;
-      if (footerClicks === 5) {
-        alert("You really like the footer huh");
-        footerClicks = 0;
-      }
-    });
-
-    // Close secret video
-    document.getElementById("close-video").addEventListener("click", () => {
-      const panel = document.getElementById("secret-video-panel");
-      const video = document.getElementById("secret-video");
-      video.pause();
-      panel.classList.add("hidden");
     });
   </script>
 </body>

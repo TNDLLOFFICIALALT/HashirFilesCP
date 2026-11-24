@@ -21,13 +21,11 @@ body {
   line-height: 1.5;
 }
 
-/* NEVER SHOW THE WEBSITE BEFORE PASSWORD ENTRY */
+/* ===== PASSWORD SCREEN ===== */
 
 #main-site {
   display: none;
 }
-
-/* ===== PASSWORD SCREEN ===== */
 
 #password-screen {
   position: fixed;
@@ -403,17 +401,19 @@ footer {
   visibility: visible;
 }
 
+/* WIDER LIGHTBOX LAYOUT */
+
 .lightbox-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  width: min(1150px, 100%);
+  gap: 30px;
+  width: min(1450px, 100%);
   max-height: 88vh;
   min-width: 0;
 }
 
-/* IMAGE SIDE */
+/* ===== IMAGE SIDE ===== */
 
 .lightbox-image-side {
   flex: 1 1 auto;
@@ -445,23 +445,25 @@ footer {
   font-size: 0.9rem;
 }
 
-/* VIDEO SIDE */
+/* ===== WIDER VIDEO SIDE ===== */
 
 .lightbox-video-side {
   display: none;
-  flex: 0 0 320px;
-  width: 320px;
+  flex: 0 0 460px;
+  width: 460px;
   min-width: 0;
-  max-height: 82vh;
+  max-height: 85vh;
   flex-direction: column;
   align-self: center;
-  gap: 12px;
+  gap: 16px;
 }
+
+/* VIDEO PLAYER */
 
 .lightbox-video-side video {
   display: block;
   width: 100%;
-  max-height: 240px;
+  max-height: 260px;
   aspect-ratio: 16 / 9;
   object-fit: contain;
   background: #000;
@@ -469,29 +471,62 @@ footer {
   border-radius: 12px;
 }
 
-/* VIDEO DESCRIPTION */
+/* ===== DESCRIPTION BOX ===== */
 
 .video-description {
   background: #18181b;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 15px 16px;
+
+  padding: 22px;
+
   color: #d4d4d8;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  max-height: 38vh;
+  font-size: 1rem;
+  line-height: 1.8;
+
+  width: 100%;
+
+  /* More room for long descriptions */
+  max-height: 55vh;
+
+  /* Allow scrolling through the entire description */
   overflow-y: auto;
+  overflow-x: hidden;
+
   overflow-wrap: anywhere;
+
+  scrollbar-width: thin;
+  scrollbar-color: #71717a #18181b;
 }
 
 .video-description h3 {
   color: #fff;
-  font-size: 1rem;
-  margin-bottom: 7px;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
 }
 
 .video-description p {
   color: #c4c4cc;
+}
+
+/* DESCRIPTION SCROLLBAR */
+
+.video-description::-webkit-scrollbar {
+  width: 8px;
+}
+
+.video-description::-webkit-scrollbar-track {
+  background: #18181b;
+  border-radius: 10px;
+}
+
+.video-description::-webkit-scrollbar-thumb {
+  background: #52525b;
+  border-radius: 10px;
+}
+
+.video-description::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
 }
 
 /* ===== LIGHTBOX BUTTONS ===== */
@@ -537,7 +572,27 @@ footer {
   transform: translateY(-50%);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== TABLET ===== */
+
+@media (max-width: 1100px) {
+
+  .lightbox {
+    padding: 66px 58px 24px;
+    overflow-y: auto;
+  }
+
+  .lightbox-content {
+    gap: 20px;
+  }
+
+  .lightbox-video-side {
+    flex-basis: 380px;
+    width: 380px;
+  }
+
+}
+
+/* ===== SMALLER SCREENS ===== */
 
 @media (max-width: 900px) {
 
@@ -577,7 +632,7 @@ footer {
   }
 
   .video-description {
-    max-height: 24vh;
+    max-height: 35vh;
   }
 
   .nav-btn.prev {
@@ -608,6 +663,12 @@ footer {
 
   .lightbox-image-side img {
     max-height: 40vh;
+  }
+
+  .video-description {
+    max-height: 40vh;
+    padding: 18px;
+    font-size: 0.95rem;
   }
 
   .close-btn {

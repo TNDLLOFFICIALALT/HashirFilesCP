@@ -163,6 +163,7 @@ body {
   object-fit: contain;
   background: #000;
   pointer-events: none;
+  user-select: none;
 }
 
 .chess-progress-section {

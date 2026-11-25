@@ -208,31 +208,15 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     let loadingFinished = false;
     let loadingStarted = false;
 
-// Hide everything initially.
+// Always require password on every page load.
 mainSite.style.display = "none";
 loadingScreen.style.display = "none";
 
-// Stop the loading video immediately.
 loadingVideo.pause();
-loadingVideo.muted = true;
+loadingVideo.currentTime = 0;
 
-// Check whether this session has already unlocked the archive.
-if (sessionStorage.getItem("hashirUnlocked") === "true") {
-  passwordScreen.style.display = "none";
-  loadingScreen.style.display = "none";
-  mainSite.style.display = "block";
-
-  // Absolutely prevent loading video playback.
-  loadingVideo.pause();
-  loadingVideo.currentTime = 0;
-
-} else {
-  passwordScreen.style.display = "flex";
-  loadingScreen.style.display = "none";
-  mainSite.style.display = "none";
-
-  passwordInput.focus();
-}
+passwordScreen.style.display = "flex";
+passwordInput.focus();
     if (sessionStorage.getItem("hashirUnlocked") === "true") {
       passwordScreen.style.display = "none";
       loadingScreen.style.display = "none";

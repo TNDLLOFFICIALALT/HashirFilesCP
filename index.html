@@ -181,9 +181,8 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
   </div>
 
   <script>
-
     // ==========================================
-    // PASSWORD SYSTEM
+    // PASSWORD + CHESS LOADING SYSTEM
     // ==========================================
 
     const CORRECT_PASSWORD = "h@$h!r_69";
@@ -206,39 +205,59 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
     const pawnPiece = document.getElementById("pawn-piece");
     const pawnMarker = document.getElementById("pawn-marker");
 
+    let loadingFinished = false;
+    let loadingStarted = false;
+
+    // Hide the archive until access is completed.
     mainSite.style.display = "none";
     loadingScreen.style.display = "none";
 
-    let loadingFinished = false;
-
-    // Same-tab refresh keeps access.
-    // A new tab asks for the password again.
+    // Only completed sessions can skip the password/loading sequence.
     if (sessionStorage.getItem("hashirUnlocked") === "true") {
       passwordScreen.style.display = "none";
+      loadingScreen.style.display = "none";
       mainSite.style.display = "block";
     } else {
       passwordScreen.style.display = "flex";
+      loadingScreen.style.display = "none";
+      mainSite.style.display = "none";
       passwordInput.focus();
     }
 
+    function resetChessProgress() {
+      loadingFinished = false;
+      loadingStarted = false;
+
+      progressFill.style.width = "0%";
+      pawnMarker.style.left = "0%";
+      progressPercent.textContent = "0%";
+
+      pawnPiece.textContent = "♟";
+      pawnMarker.classList.remove("queen-reached");
+
+      progressStatus.textContent = "The pawn is advancing...";
+      loadingError.textContent = "";
+      startVideoBtn.hidden = true;
+    }
+
     function updateLoadingProgress() {
-      if (!loadingVideo.duration || !Number.isFinite(loadingVideo.duration)) {
+      if (
+        !Number.isFinite(loadingVideo.duration) ||
+        loadingVideo.duration <= 0
+      ) {
         return;
       }
 
       const percent = Math.min(
-        100,
+        99.5,
         (loadingVideo.currentTime / loadingVideo.duration) * 100
       );
 
-      // Keep the bar below 100 until the video actually ends.
-      const safePercent = Math.min(percent, 99.5);
+      progressFill.style.width = percent + "%";
+      pawnMarker.style.left = percent + "%";
+      progressPercent.textContent = Math.floor(percent) + "%";
 
-      progressFill.style.width = safePercent + "%";
-      pawnMarker.style.left = safePercent + "%";
-      progressPercent.textContent = Math.floor(safePercent) + "%";
-
-      if (safePercent >= 50) {
+      if (percent >= 50) {
         progressStatus.textContent = "The pawn is getting closer...";
       } else {
         progressStatus.textContent = "The pawn is advancing...";
@@ -259,81 +278,98 @@ Two missing children. Hundreds of thousands of dollars. And a mystery that would
 
       progressStatus.textContent = "CHECKMATE. QUEEN PROMOTED.";
 
+      // Save access only after the video has completely ended.
+      sessionStorage.setItem("hashirUnlocked", "true");
+
       setTimeout(() => {
         loadingScreen.style.display = "none";
         mainSite.style.display = "block";
       }, 1100);
     }
 
+    function handleVideoPlayFailure() {
+      loadingStarted = false;
+      startVideoBtn.hidden = false;
+
+      loadingError.textContent =
+        "Brave blocked autoplay. Press the button below to start the video with sound.";
+    }
+
     function startLoadingVideo() {
+      if (loadingStarted || loadingFinished) return;
+
       loadingError.textContent = "";
       startVideoBtn.hidden = true;
 
       loadingVideo.muted = false;
       loadingVideo.volume = 1;
 
-      const playAttempt = loadingVideo.play();
+      const playPromise = loadingVideo.play();
 
-      if (playAttempt && typeof playAttempt.catch === "function") {
-        playAttempt.catch(() => {
-          startVideoBtn.hidden = false;
-          loadingError.textContent =
-            "Your browser blocked autoplay. Press the button to start.";
-        });
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise
+          .then(() => {
+            loadingStarted = true;
+            loadingError.textContent = "";
+          })
+          .catch(handleVideoPlayFailure);
+      } else {
+        loadingStarted = true;
       }
     }
 
-    loadingVideo.addEventListener("timeupdate", updateLoadingProgress);
+    function tryUnlock() {
+      if (passwordInput.value !== CORRECT_PASSWORD) {
+        passwordError.textContent = "Incorrect password";
+        passwordInput.value = "";
+        passwordInput.focus();
+        return;
+      }
 
+      // Display the loading screen.
+      passwordScreen.style.display = "none";
+      mainSite.style.display = "none";
+      loadingScreen.style.display = "flex";
+
+      resetChessProgress();
+
+      // Reset the video without calling load().
+      // Calling play() directly below preserves the password click's
+      // user interaction, which helps Brave allow sound playback.
+      try {
+        loadingVideo.currentTime = 0;
+      } catch (error) {
+        // The video may still be loading.
+      }
+
+      loadingVideo.muted = false;
+      loadingVideo.volume = 1;
+      loadingVideo.loop = false;
+
+      // IMPORTANT: Attempt playback immediately inside the password action.
+      startLoadingVideo();
+    }
+
+    loadingVideo.addEventListener("timeupdate", updateLoadingProgress);
     loadingVideo.addEventListener("ended", finishLoading);
 
     loadingVideo.addEventListener("error", () => {
       if (!loadingFinished) {
+        loadingStarted = false;
         loadingError.textContent =
-          "The loading video could not be loaded. Check the video file and try again.";
+          "The loading video could not be loaded. Check the filename and videos folder.";
       }
     });
 
-    startVideoBtn.addEventListener("click", startLoadingVideo);
+    startVideoBtn.addEventListener("click", () => {
+      // A direct click gives Brave another user interaction to allow sound.
+      startLoadingVideo();
+    });
 
-    // Hide context menu and prevent ordinary keyboard pause shortcuts.
+    // Prevent the loading video from showing a context menu.
     loadingVideo.addEventListener("contextmenu", event => {
       event.preventDefault();
     });
-
-    loadingVideo.addEventListener("keydown", event => {
-      event.preventDefault();
-    });
-
-    function tryUnlock() {
-      if (passwordInput.value === CORRECT_PASSWORD) {
-        sessionStorage.setItem("hashirUnlocked", "true");
-
-        passwordScreen.style.display = "none";
-        loadingScreen.style.display = "flex";
-
-        loadingFinished = false;
-
-        progressFill.style.width = "0%";
-        pawnMarker.style.left = "0%";
-        progressPercent.textContent = "0%";
-        pawnPiece.textContent = "♟";
-        pawnMarker.classList.remove("queen-reached");
-        progressStatus.textContent = "The pawn is advancing...";
-
-        loadingVideo.currentTime = 0;
-        loadingVideo.muted = false;
-        loadingVideo.volume = 1;
-
-        // Attempt playback directly from the password-button interaction.
-        startLoadingVideo();
-
-      } else {
-        passwordError.textContent = "Incorrect password";
-        passwordInput.value = "";
-        passwordInput.focus();
-      }
-    }
 
     passwordBtn.addEventListener("click", tryUnlock);
 

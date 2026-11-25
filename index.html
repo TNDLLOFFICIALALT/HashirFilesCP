@@ -217,16 +217,6 @@ loadingVideo.currentTime = 0;
 
 passwordScreen.style.display = "flex";
 passwordInput.focus();
-    if (sessionStorage.getItem("hashirUnlocked") === "true") {
-      passwordScreen.style.display = "none";
-      loadingScreen.style.display = "none";
-      mainSite.style.display = "block";
-    } else {
-      passwordScreen.style.display = "flex";
-      loadingScreen.style.display = "none";
-      mainSite.style.display = "none";
-      passwordInput.focus();
-    }
 
     function resetChessProgress() {
       loadingFinished = false;
